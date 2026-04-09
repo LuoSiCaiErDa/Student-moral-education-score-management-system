@@ -44,6 +44,31 @@
 - 任务使用 `mvn clean package`。
 - 你也可以直接运行 `Run Moral Education Project` 任务启动应用。
 
+## Ubuntu 一键部署
+
+项目已提供一键部署工具：
+
+- `deploy-ubuntu.sh`：在 Ubuntu 上部署并创建 systemd 服务
+- `package-ubuntu.sh`：本地打包构建并生成部署包 `moral-education-score-management-system-ubuntu-deploy.tar.gz`
+- `ubuntu-service.template`：systemd 服务模板
+
+部署步骤：
+
+1. 在本地构建项目：
+   ```bash
+   ./package-ubuntu.sh
+   ```
+2. 将生成的 `moral-education-score-management-system-ubuntu-deploy.tar.gz` 上传到 Ubuntu 服务器。
+3. 在 Ubuntu 服务器上解压并运行：
+   ```bash
+   tar -xzvf moral-education-score-management-system-ubuntu-deploy.tar.gz
+   chmod +x deploy-ubuntu.sh
+   ./deploy-ubuntu.sh
+   ```
+4. 访问 `http://localhost:3030/`。
+
+> 如果服务器未安装 JDK 17，请先执行 `sudo apt update && sudo apt install openjdk-17-jdk -y`。
+
 ## 默认示例账号
 
 - 管理员：`admin001` / `admin123`

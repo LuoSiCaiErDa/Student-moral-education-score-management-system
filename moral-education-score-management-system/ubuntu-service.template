@@ -1,0 +1,14 @@
+[Unit]
+Description=学生德育分管理系统
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/opt/moral-education-score-management-system
+ExecStart=/usr/bin/java -jar /opt/moral-education-score-management-system/moral-education-score-management-system-0.0.1-SNAPSHOT.jar --spring.config.location=/opt/moral-education-score-management-system/application-ubuntu.yml
+SuccessExitStatus=143
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

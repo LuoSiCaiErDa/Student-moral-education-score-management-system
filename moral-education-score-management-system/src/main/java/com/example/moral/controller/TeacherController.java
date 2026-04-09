@@ -24,7 +24,9 @@ public class TeacherController {
     }
 
     @GetMapping
-    public List<Teacher> getAll() {
+    public List<Teacher> getAll(@RequestHeader HttpHeaders headers) {
+        User user = SecurityUtils.requireUser(authService, SecurityUtils.resolveToken(headers));
+        SecurityUtils.requireAnyRole(user, Role.ADMIN, Role.TEACHER);
         return repository.findAll();
     }
 

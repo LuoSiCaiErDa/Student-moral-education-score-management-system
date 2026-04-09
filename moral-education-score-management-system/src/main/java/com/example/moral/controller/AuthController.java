@@ -7,9 +7,12 @@ import com.example.moral.repository.UserRepository;
 import com.example.moral.repository.StudentRepository;
 import com.example.moral.service.AuthService;
 import com.example.moral.service.SecurityUtils;
+import com.example.moral.util.ResponseUtils;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,9 +37,12 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody Map<String, String> payload) {
         String username = payload.get("username");
         String password = payload.get("password");
-        var userOptional = authService.authenticate(username, password);
+        if (username == null || username.isBlank() || password == null || password.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "用户名和密码不能为空");
+        }
+        var userOptional = authService.authenticate(username.trim(), password.trim());
         if (userOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body("用户名或密码错误");
+            return ResponseUtils.badRequest("用户名或密码错误");
         }
         var user = userOptional.get();
         String token = authService.createToken(user);
@@ -58,16 +64,21 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestHeader HttpHeaders headers, @RequestBody User user) {
         User currentUser = SecurityUtils.requireUser(authService, SecurityUtils.resolveToken(headers));
-        if (currentUser.getRole() != Role.ADMIN && currentUser.getRole() != Role.TEACHER) {
-            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "只有管理员或教师可以注册新用户");
+        SecurityUtils.requireAnyRole(currentUser, Role.ADMIN, Role.TEACHER);
+        if (user.getUsername() == null || user.getUsername().isBlank() || user.getPassword() == null || user.getPassword().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "用户名和密码不能为空");
         }
         if (user.getRole() != Role.STUDENT && user.getRole() != Role.CLASS_CADRE) {
-            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "只能注册学生或班干部账户");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "只能注册学生或班干部账户");
         }
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            return ResponseEntity.badRequest().body("用户名已存在");
+        String username = user.getUsername().trim();
+        if (userRepository.findByUsername(username).isPresent()) {
+            return ResponseUtils.badRequest("用户名已存在");
         }
+        user.setUsername(username);
+        user.setPassword(user.getPassword().trim());
         userRepository.save(user);
+        ensureStudentRecord(user);
         return ResponseEntity.ok(user);
     }
 
@@ -76,33 +87,33 @@ public class AuthController {
                                             @RequestBody List<StudentImportRequest> requests) {
         User currentUser = SecurityUtils.requireUser(authService, SecurityUtils.resolveToken(headers));
         if (currentUser.getRole() != Role.ADMIN && currentUser.getRole() != Role.TEACHER) {
-            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "只有管理员或教师可以导入学生账号");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "只有管理员或教师可以导入学生账号");
         }
         if (requests == null || requests.isEmpty()) {
-            return ResponseEntity.badRequest().body("导入列表不能为空");
+            return ResponseUtils.badRequest("导入列表不能为空");
         }
 
         Set<String> studentNumbers = new HashSet<>();
         Set<String> usernames = new HashSet<>();
         for (StudentImportRequest request : requests) {
             if (request.studentNumber == null || request.studentNumber.isBlank() || request.name == null || request.name.isBlank()) {
-                return ResponseEntity.badRequest().body("每个学生必须包含学号和姓名");
+                return ResponseUtils.badRequest("每个学生必须包含学号和姓名");
             }
             String username = request.studentNumber.trim();
             if (request.password == null || request.password.isBlank()) {
-                return ResponseEntity.badRequest().body("每个学生必须包含密码");
+                return ResponseUtils.badRequest("每个学生必须包含密码");
             }
             if (!studentNumbers.add(username)) {
-                return ResponseEntity.badRequest().body("导入列表中存在重复学号: " + username);
+                return ResponseUtils.badRequest("导入列表中存在重复学号: " + username);
             }
             if (!usernames.add(username)) {
-                return ResponseEntity.badRequest().body("导入列表中存在重复用户名: " + username);
+                return ResponseUtils.badRequest("导入列表中存在重复用户名: " + username);
             }
             if (userRepository.findByUsername(username).isPresent()) {
-                return ResponseEntity.badRequest().body("用户名已存在: " + username);
+                return ResponseUtils.badRequest("用户名已存在: " + username);
             }
             if (studentRepository.findByStudentNumber(username).isPresent()) {
-                return ResponseEntity.badRequest().body("学号已存在: " + username);
+                return ResponseUtils.badRequest("学号已存在: " + username);
             }
         }
 
@@ -113,11 +124,11 @@ public class AuthController {
                 try {
                     role = Role.valueOf(request.role.trim());
                 } catch (IllegalArgumentException e) {
-                    return ResponseEntity.badRequest().body("无效角色: " + request.role);
+                    return ResponseUtils.badRequest("无效角色: " + request.role);
                 }
             }
             if (role != Role.STUDENT && role != Role.CLASS_CADRE) {
-                return ResponseEntity.badRequest().body("导入账号只支持 STUDENT 或 CLASS_CADRE 角色");
+                return ResponseUtils.badRequest("导入账号只支持 STUDENT 或 CLASS_CADRE 角色");
             }
             User user = new User();
             user.setUsername(username);
@@ -136,6 +147,22 @@ public class AuthController {
         }
 
         return ResponseEntity.ok(Map.of("imported", requests.size()));
+    }
+
+    private void ensureStudentRecord(User user) {
+        if (user.getRole() != Role.STUDENT && user.getRole() != Role.CLASS_CADRE) {
+            return;
+        }
+        if (studentRepository.findByStudentNumber(user.getUsername()).isPresent()) {
+            return;
+        }
+        Student student = new Student();
+        student.setStudentNumber(user.getUsername());
+        student.setName(user.getDisplayName() == null || user.getDisplayName().isBlank() ? user.getUsername() : user.getDisplayName());
+        student.setGrade("");
+        student.setClassName("");
+        student.setTotalScore(0);
+        studentRepository.save(student);
     }
 
     public static class StudentImportRequest {

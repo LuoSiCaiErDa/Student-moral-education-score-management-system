@@ -9,13 +9,17 @@ import com.example.moral.repository.MoralScoreRecordRepository;
 import com.example.moral.repository.StudentRepository;
 import com.example.moral.service.AuthService;
 import com.example.moral.service.SecurityUtils;
+import com.example.moral.util.ResponseUtils;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/scores")
@@ -36,7 +40,7 @@ public class MoralScoreController {
     public List<MoralScoreRecord> getAllScores(@RequestHeader HttpHeaders headers) {
         User user = SecurityUtils.requireUser(authService, SecurityUtils.resolveToken(headers));
         if (user.getRole() == Role.STUDENT) {
-            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "学生无权限访问所有记录");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "学生无权限访问所有记录");
         }
         return scoreRepository.findAll();
     }
@@ -49,7 +53,7 @@ public class MoralScoreController {
                     .filter(record -> record.getStatus() == RecordStatus.PENDING)
                     .toList();
         }
-        throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "权限不足");
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "权限不足");
     }
 
     @PostMapping
@@ -57,21 +61,28 @@ public class MoralScoreController {
                                       @RequestBody Map<String, String> payload) {
         User user = SecurityUtils.requireUser(authService, SecurityUtils.resolveToken(headers));
         if (user.getRole() != Role.TEACHER && user.getRole() != Role.ADMIN && user.getRole() != Role.CLASS_CADRE) {
-            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "只有管理员、教师或班干部可以提交德育分记录");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "只有管理员、教师或班干部可以提交德育分记录");
         }
         String studentNumber = payload.get("studentNumber");
-        if (studentNumber == null) {
-            return ResponseEntity.badRequest().body("studentNumber is required");
+        if (studentNumber == null || studentNumber.isBlank()) {
+            return ResponseUtils.badRequest("studentNumber is required");
         }
-        Student student = studentRepository.findByStudentNumber(studentNumber).orElse(null);
+        Student student = studentRepository.findByStudentNumber(studentNumber.trim()).orElse(null);
         if (student == null) {
-            return ResponseEntity.badRequest().body("Student not found");
+            return ResponseUtils.badRequest("Student not found");
+        }
+
+        int score;
+        try {
+            score = Integer.parseInt(payload.getOrDefault("score", "0").trim());
+        } catch (NumberFormatException e) {
+            return ResponseUtils.badRequest("score 必须是整数");
         }
 
         MoralScoreRecord record = new MoralScoreRecord();
         record.setStudent(student);
         record.setCategory(payload.getOrDefault("category", "一般行为"));
-        record.setScore(Integer.parseInt(payload.getOrDefault("score", "0")));
+        record.setScore(score);
         record.setTerm(payload.getOrDefault("term", "未知学期"));
         record.setTeacherName(user.getDisplayName() == null ? user.getUsername() : user.getDisplayName());
         record.setRemark(payload.getOrDefault("remark", ""));
@@ -88,20 +99,25 @@ public class MoralScoreController {
                                                         @RequestBody Map<String, String> payload) {
         User user = SecurityUtils.requireUser(authService, SecurityUtils.resolveToken(headers));
         if (user.getRole() != Role.ADMIN && user.getRole() != Role.TEACHER) {
-            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "只有管理员或教师可以审核德育分记录");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "只有管理员或教师可以审核德育分记录");
         }
         return scoreRepository.findById(id)
                 .map(record -> {
                     String action = payload.getOrDefault("action", "REJECTED");
-                    RecordStatus status = "APPROVED".equalsIgnoreCase(action) ? RecordStatus.APPROVED : RecordStatus.REJECTED;
-                    record.setStatus(status);
+                    RecordStatus targetStatus = "APPROVED".equalsIgnoreCase(action) ? RecordStatus.APPROVED : RecordStatus.REJECTED;
+                    RecordStatus currentStatus = record.getStatus();
+                    record.setStatus(targetStatus);
                     record.setAuditComment(payload.getOrDefault("comment", ""));
                     record.setAuditor(user.getDisplayName() == null ? user.getUsername() : user.getDisplayName());
                     record.setAuditedAt(LocalDateTime.now());
-                    if (status == RecordStatus.APPROVED) {
-                        Student student = record.getStudent();
-                        if (student != null && record.getScore() != null) {
-                            student.setTotalScore(student.getTotalScore() + record.getScore());
+
+                    Student student = record.getStudent();
+                    if (student != null && record.getScore() != null) {
+                        if (currentStatus != RecordStatus.APPROVED && targetStatus == RecordStatus.APPROVED) {
+                            student.setTotalScore(Optional.ofNullable(student.getTotalScore()).orElse(0) + record.getScore());
+                            studentRepository.save(student);
+                        } else if (currentStatus == RecordStatus.APPROVED && targetStatus != RecordStatus.APPROVED) {
+                            student.setTotalScore(Optional.ofNullable(student.getTotalScore()).orElse(0) - record.getScore());
                             studentRepository.save(student);
                         }
                     }
@@ -114,7 +130,7 @@ public class MoralScoreController {
                                        @PathVariable Long id) {
         User user = SecurityUtils.requireUser(authService, SecurityUtils.resolveToken(headers));
         if (user.getRole() != Role.ADMIN) {
-            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "只有管理员可以删除记录");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "只有管理员可以删除记录");
         }
         return scoreRepository.findById(id)
                 .map(record -> {

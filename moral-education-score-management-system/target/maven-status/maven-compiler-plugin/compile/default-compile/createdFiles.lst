@@ -4,6 +4,7 @@ com\example\moral\repository\StudentRepository.class
 com\example\moral\controller\TeacherController.class
 com\example\moral\entity\Teacher.class
 com\example\moral\entity\User.class
+com\example\moral\util\ResponseUtils.class
 com\example\moral\entity\MoralScoreRecord.class
 com\example\moral\entity\Student.class
 com\example\moral\DataInitializer.class

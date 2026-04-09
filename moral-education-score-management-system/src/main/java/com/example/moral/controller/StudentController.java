@@ -9,12 +9,16 @@ import com.example.moral.repository.StudentRepository;
 import com.example.moral.service.AuthService;
 import com.example.moral.service.SecurityUtils;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/students")
@@ -35,32 +39,35 @@ public class StudentController {
     public List<Student> getAllStudents(@RequestHeader HttpHeaders headers) {
         User user = SecurityUtils.requireUser(authService, SecurityUtils.resolveToken(headers));
         if (user.getRole() == Role.STUDENT) {
-            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "学生无权限访问所有学生数据");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "学生无权限访问所有学生数据");
         }
         return studentRepository.findAll();
     }
 
     @GetMapping("/rankings")
     public ResponseEntity<Map<String, Object>> getClassRankings(@RequestHeader(name = "Authorization", required = false) String authorization) {
-        // 允许匿名访问排行榜，如果带有 token 时可验证用户
         if (authorization != null && authorization.startsWith("Bearer ")) {
-            String token = authorization.substring(7);
-            authService.getUserByToken(token);
+            SecurityUtils.requireUser(authService, authorization.substring(7));
         }
 
         List<Student> allStudents = studentRepository.findAll();
         String className = allStudents.stream()
                 .findFirst()
-                .map(student -> student.getGrade() + " " + student.getClassName())
+                .map(student -> {
+                    String grade = Optional.ofNullable(student.getGrade()).orElse("");
+                    String classNameValue = Optional.ofNullable(student.getClassName()).orElse("");
+                    return (grade + " " + classNameValue).trim();
+                })
+                .filter(name -> !name.isBlank())
                 .orElse("未知班级");
 
         List<Map<String, Object>> studentRankings = allStudents.stream()
-                .sorted((s1, s2) -> s2.getTotalScore().compareTo(s1.getTotalScore()))
+                .sorted(Comparator.comparingInt((Student student) -> Optional.ofNullable(student.getTotalScore()).orElse(0)).reversed())
                 .map(student -> {
                     Map<String, Object> item = new LinkedHashMap<>();
                     item.put("studentNumber", student.getStudentNumber());
                     item.put("name", student.getName());
-                    item.put("totalScore", student.getTotalScore());
+                    item.put("totalScore", Optional.ofNullable(student.getTotalScore()).orElse(0));
                     return item;
                 })
                 .toList();
@@ -85,23 +92,18 @@ public class StudentController {
     public ResponseEntity<Student> getMyStudentInfo(@RequestHeader HttpHeaders headers) {
         User user = SecurityUtils.requireUser(authService, SecurityUtils.resolveToken(headers));
         if (user.getRole() != Role.STUDENT) {
-            return ResponseEntity.badRequest().build();
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "只有学生可以查看个人信息");
         }
         return studentRepository.findByStudentNumber(user.getUsername())
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "当前学生信息不存在"));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Student> getStudent(@RequestHeader HttpHeaders headers,
                                               @PathVariable Long id) {
         User user = SecurityUtils.requireUser(authService, SecurityUtils.resolveToken(headers));
-        if (user.getRole() == Role.STUDENT) {
-            Student self = studentRepository.findByStudentNumber(user.getUsername()).orElse(null);
-            if (self == null || !self.getId().equals(id)) {
-                throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "学生只能查看自己的信息");
-            }
-        }
+        assertStudentAccess(user, id, "学生只能查看自己的信息");
         return studentRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -111,12 +113,7 @@ public class StudentController {
     public ResponseEntity<List<MoralScoreRecord>> getStudentScores(@RequestHeader HttpHeaders headers,
                                                                    @PathVariable Long id) {
         User user = SecurityUtils.requireUser(authService, SecurityUtils.resolveToken(headers));
-        if (user.getRole() == Role.STUDENT) {
-            Student self = studentRepository.findByStudentNumber(user.getUsername()).orElse(null);
-            if (self == null || !self.getId().equals(id)) {
-                throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "学生只能查看自己的成绩");
-            }
-        }
+        assertStudentAccess(user, id, "学生只能查看自己的成绩");
         return studentRepository.findById(id)
                 .map(student -> ResponseEntity.ok(moralScoreRecordRepository.findByStudent(student)))
                 .orElse(ResponseEntity.notFound().build());
@@ -142,5 +139,14 @@ public class StudentController {
                     return ResponseEntity.ok(studentRepository.save(student));
                 })
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    private void assertStudentAccess(User user, Long studentId, String errorMessage) {
+        if (user.getRole() == Role.STUDENT) {
+            Student self = studentRepository.findByStudentNumber(user.getUsername()).orElse(null);
+            if (self == null || !self.getId().equals(studentId)) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, errorMessage);
+            }
+        }
     }
 }
