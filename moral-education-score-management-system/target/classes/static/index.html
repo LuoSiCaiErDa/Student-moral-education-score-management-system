@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>学生德育分管理系统</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f4f8fb;
+            --card: #ffffff;
+            --border: rgba(0, 0, 0, 0.08);
+            --text: #2c3e50;
+            --muted: #6b7c93;
+            --primary: #2f80ed;
+            --primary-dark: #1f6ed8;
+            --success: #27ae60;
+            --danger: #eb5757;
+            --shadow: 0 18px 50px rgba(47, 128, 237, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Noto Sans SC", "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(180deg, #eef6ff 0%, #f9fbff 100%);
+            color: var(--text);
+        }
+
+        #app {
+            width: min(1200px, calc(100% - 32px));
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #2f80ed 0%, #56ccf2 100%);
+            border-radius: 24px;
+            padding: 32px 24px 28px;
+            color: #fff;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .hero h1 {
+            margin: 0 0 8px;
+            font-size: 2.4rem;
+            letter-spacing: 0.02em;
+        }
+
+        .hero p {
+            margin: 0;
+            font-size: 1rem;
+            line-height: 1.8;
+            max-width: 680px;
+            color: rgba(255,255,255,0.92);
+        }
+
+        .page-grid {
+            display: grid;
+            grid-template-columns: 1.4fr 0.9fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(46, 125, 246, 0.1);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(47, 128, 237, 0.08);
+            backdrop-filter: blur(10px);
+        }
+
+        .panel h2,
+        .panel h3,
+        .panel h4 {
+            margin-top: 0;
+            color: var(--text);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid #eef4ff;
+        }
+
+        .section-header span {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .grid-two {
+            display: grid;
+            gap: 20px;
+        }
+
+        .hero-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .mt-24 {
+            margin-top: 24px;
+        }
+
+        .status-message {
+            border-left: 4px solid var(--primary);
+            padding: 14px 16px;
+            background: #f3f7ff;
+            color: var(--text);
+            border-radius: 12px;
+            margin-top: 16px;
+        }
+
+        .status-message.error {
+            border-color: var(--danger);
+            background: #fdecea;
+            color: #922d2d;
+        }
+
+        .status-message.success {
+            border-color: var(--success);
+            background: #eafbea;
+            color: #216b35;
+        }
+
+        button {
+            border: none;
+            border-radius: 999px;
+            padding: 12px 20px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            background: var(--primary);
+            color: #fff;
+            transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(47, 128, 237, 0.12);
+        }
+
+        button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .secondary-btn {
+            background: #f5f8fc;
+            color: var(--text);
+        }
+
+        .secondary-btn:hover {
+            background: #e9eff8;
+        }
+
+        .danger-btn {
+            background: var(--danger);
+        }
+
+        .danger-btn:hover {
+            background: #d73d3d;
+        }
+
+        .form-group {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        label {
+            font-size: 0.95rem;
+            color: var(--muted);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            border: 1px solid #d7dfe8;
+            border-radius: 12px;
+            padding: 12px 14px;
+            background: #f8fbff;
+            color: var(--text);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(47, 128, 237, 0.12);
+        }
+
+        textarea {
+            min-height: 140px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        table {
+            display: block;
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 0.95rem;
+            border-radius: 18px;
+            overflow: hidden;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        th, td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #edf1f7;
+        }
+
+        th {
+            text-align: left;
+            font-weight: 600;
+            color: var(--muted);
+            background: #f7faff;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #fbfdff;
+        }
+
+        tbody tr:hover {
+            background: #f6f9ff;
+        }
+
+        .small-text {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-top: 8px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 999px;
+            background: #eef4ff;
+            color: #2f80ed;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .hero-card {
+            display: grid;
+            gap: 16px;
+        }
+
+        .hero-card .card-title {
+            margin: 0 0 6px;
+            font-size: 1rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text);
+        }
+
+        @media (max-width: 960px) {
+            .page-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-card {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 680px) {
+            .hero {
+                padding: 24px;
+            }
+            .page-grid {
+                gap: 16px;
+            }
+            button {
+                width: 100%;
+            }
+            .button-group {
+                justify-content: stretch;
+            }
+            .button-group button {
+                min-width: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <section class="hero">
+        <h1>学生德育分管理系统</h1>
+        <p>统一展示德育分排行榜、学生信息、审核流程与班干部提报，帮助班主任和管理员高效管理德育分。</p>
+    </section>
+
+    <div class="page-grid">
+        <section class="panel">
+            <div class="section-header">
+                <div>
+                    <h2>班级德育分排行榜</h2>
+                    <p class="small-text">当前班级：{{ className || '暂无班级信息' }}</p>
+                </div>
+                <button class="secondary-btn" @click="loadRankings">刷新排行</button>
+            </div>
+
+            <div v-if="rankings.length > 0">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>排名</th>
+                            <th>学号</th>
+                            <th>姓名</th>
+                            <th>总分</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(ranking, index) in rankings" :key="ranking.studentNumber">
+                            <td>{{ index + 1 }}</td>
+                            <td>{{ ranking.studentNumber }}</td>
+                            <td>{{ ranking.name }}</td>
+                            <td>{{ ranking.totalScore }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div v-else-if="rankingsLoaded" class="small-text">暂无排行榜数据，登录后可刷新获取最新成绩。</div>
+            <div v-else class="small-text">正在加载排行榜...</div>
+        </section>
+
+        <aside class="panel">
+            <div v-if="!token">
+                <div class="section-header">
+                    <div>
+                        <h2>登录</h2>
+                        <p class="small-text">请使用已有账号进入系统。</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>用户名</label>
+                    <input v-model="loginForm.username" placeholder="student001 / teacher001 / admin001" />
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" v-model="loginForm.password" placeholder="请输入密码" />
+                </div>
+                <button @click="login">登录</button>
+                <p class="small-text" v-if="message">{{ message }}</p>
+            </div>
+
+            <div v-else>
+                <div class="section-header">
+                    <div>
+                        <h2>欢迎，{{ user.displayName || user.username }}</h2>
+                        <p class="small-text">当前角色：{{ user.role }}</p>
+                    </div>
+                    <button class="secondary-btn" @click="logout">退出</button>
+                </div>
+
+                <div class="hero-card">
+                    <article class="panel">
+                        <div class="card-title">当前班级</div>
+                        <p class="stat-value">{{ className || '未知班级' }}</p>
+                    </article>
+                    <article class="panel">
+                        <div class="card-title">待审核</div>
+                        <p class="stat-value">{{ pendingScores.length || 0 }}</p>
+                    </article>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <div v-if="token" class="page-grid">
+        <section class="panel">
+            <div class="section-header">
+                <h2>功能中心</h2>
+            </div>
+
+            <div class="button-group">
+                <button @click="loadCategories">加载类别</button>
+                <button @click="loadStudents">加载学生</button>
+                <button @click="loadPending" v-if="user.role==='ADMIN' || user.role==='TEACHER'">加载待审核</button>
+            </div>
+
+            <div class="grid-two">
+                <div class="panel">
+                    <h3>我的信息</h3>
+                    <button class="secondary-btn" @click="loadMyStudent">查看我的信息</button>
+                    <div v-if="myStudent" class="small-text">
+                        <p>学号：{{ myStudent.studentNumber }}</p>
+                        <p>姓名：{{ myStudent.name }}</p>
+                        <p>年级：{{ myStudent.grade }}</p>
+                        <p>班级：{{ myStudent.className }}</p>
+                        <p>总分：{{ myStudent.totalScore }}</p>
+                    </div>
+                </div>
+
+                <div class="panel" v-if="user.role==='STUDENT'">
+                    <h3>我的记录</h3>
+                    <button class="secondary-btn" @click="loadMyScores">查看德育分记录</button>
+                    <table v-if="myScores.length">
+                        <thead><tr><th>类别</th><th>分值</th><th>状态</th><th>教师</th></tr></thead>
+                        <tbody>
+                            <tr v-for="record in myScores" :key="record.id">
+                                <td>{{ record.category }}</td>
+                                <td>{{ record.score }}</td>
+                                <td>{{ record.status }}</td>
+                                <td>{{ record.teacherName }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="section-header">
+                <h2>操作区</h2>
+            </div>
+
+            <div class="form-group">
+                <label>学生学号</label>
+                <input v-model="scoreForm.studentNumber" placeholder="student001" />
+            </div>
+            <div class="form-group">
+                <label>类别</label>
+                <select v-model="scoreForm.category">
+                    <option value="">请选择类别</option>
+                    <option v-for="category in categories" :key="category.id" :value="category.name">{{ category.name }}</option>
+                </select>
+            </div>
+            <div class="grid-two">
+                <div class="form-group">
+                    <label>分值</label>
+                    <input type="number" v-model="scoreForm.score" />
+                </div>
+                <div class="form-group">
+                    <label>学期</label>
+                    <input v-model="scoreForm.term" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label>备注</label>
+                <textarea v-model="scoreForm.remark"></textarea>
+            </div>
+            <button @click="submitScore">提交记录</button>
+            <p class="small-text" v-if="actionMessage">{{ actionMessage }}</p>
+
+            <div v-if="user.role==='ADMIN' || user.role==='TEACHER'" class="mt-24">
+                <h3>审核与创建</h3>
+                <div class="form-group">
+                    <label>新用户用户名</label>
+                    <input v-model="newUser.username" placeholder="用户名" />
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" v-model="newUser.password" placeholder="密码" />
+                </div>
+                <div class="form-group">
+                    <label>显示名称</label>
+                    <input v-model="newUser.displayName" placeholder="显示名称" />
+                </div>
+                <div class="form-group">
+                    <label>角色</label>
+                    <select v-model="newUser.role">
+                        <option value="STUDENT">学生</option>
+                        <option value="CLASS_CADRE">班干部</option>
+                    </select>
+                </div>
+                <button @click="registerUser">创建用户</button>
+                <p class="small-text" v-if="registerMessage">{{ registerMessage }}</p>
+
+                <div class="mt-24">
+                    <h4>批量导入学生账号</h4>
+                    <div class="button-group">
+                        <button class="secondary-btn" @click="downloadImportTemplate">下载导入模板</button>
+                        <button class="secondary-btn" @click="toggleCsvInput">{{ showCsvInput ? '关闭 CSV 粘贴' : 'CSV 粘贴导入' }}</button>
+                        <button class="secondary-btn" @click="addStudentImportRow">新增行</button>
+                    </div>
+                    <div v-if="showCsvInput" class="form-group">
+                        <label>粘贴 CSV 内容</label>
+                        <textarea v-model="csvText" placeholder="studentNumber,name,displayName,password,role,grade,className\nstudent001,张三,张三,student123,STUDENT,高一,1班"></textarea>
+                        <button @click="importCsv">导入 CSV</button>
+                        <p class="small-text">CSV 首行为字段名：studentNumber,name,displayName,password,role,grade,className。角色可选 STUDENT 或 CLASS_CADRE。</p>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>学号</th>
+                                    <th>姓名</th>
+                                    <th>显示名称</th>
+                                    <th>密码</th>
+                                    <th>角色</th>
+                                    <th>年级</th>
+                                    <th>班级</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="(row, index) in studentImportRows" :key="index">
+                                <td><input v-model="row.studentNumber" placeholder="student001" /></td>
+                                <td><input v-model="row.name" placeholder="姓名" /></td>
+                                <td><input v-model="row.displayName" placeholder="显示名称" /></td>
+                                <td><input type="password" v-model="row.password" placeholder="密码" /></td>
+                                <td>
+                                    <select v-model="row.role">
+                                        <option value="STUDENT">学生</option>
+                                        <option value="CLASS_CADRE">班干部</option>
+                                    </select>
+                                </td>
+                                <td><input v-model="row.grade" placeholder="年级" /></td>
+                                <td><input v-model="row.className" placeholder="班级" /></td>
+                                <td><button class="danger-btn" @click="removeStudentImportRow(index)">删除</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                    <button @click="importStudentAccounts">导入学生账号</button>
+                    <p class="small-text" v-if="importMessage">{{ importMessage }}</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <section v-if="user.role==='ADMIN' || user.role==='TEACHER'" class="panel mt-20">
+        <div class="section-header">
+            <h2>待审核记录</h2>
+        </div>
+        <div class="button-group">
+            <button @click="loadPending">刷新待审核</button>
+        </div>
+        <div v-if="pendingScores.length" class="table-wrapper">
+            <table>
+                <thead>
+                    <tr><th>学生</th><th>类别</th><th>分值</th><th>教师</th><th>操作</th></tr>
+                </thead>
+                <tbody>
+                    <tr v-for="record in pendingScores" :key="record.id">
+                        <td>{{ record.student?.studentNumber }}</td>
+                        <td>{{ record.category }}</td>
+                        <td>{{ record.score }}</td>
+                        <td>{{ record.teacherName }}</td>
+                        <td>
+                            <button class="secondary-btn" @click="audit(record.id, 'APPROVED')">通过</button>
+                            <button class="danger-btn" @click="audit(record.id, 'REJECTED')">驳回</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div v-else class="small-text">暂无待审核记录。</div>
+    </section>
+</div>
+
+<script>
+const { createApp } = Vue;
+
+createApp({
+    data() {
+        return {
+            loginForm: { username: '', password: '' },
+            token: null,
+            user: {},
+            message: '',
+            actionMessage: '',
+            myStudent: null,
+            myScores: [],
+            categories: [],
+            students: [],
+            pendingScores: [],
+            scoreForm: { studentNumber: '', category: '', score: 0, term: '2025-2026', remark: '' },
+            newUser: { username: '', password: '', displayName: '', role: 'STUDENT' },
+            registerMessage: '',
+            studentImportRows: [
+                { studentNumber: '', name: '', displayName: '', password: '', role: 'STUDENT', grade: '', className: '' }
+            ],
+            importMessage: '',
+            showCsvInput: false,
+            csvText: '',
+            rankings: [],
+            className: '',
+            rankingsLoaded: false
+        };
+    },
+    created() {
+        this.loadRankings();
+    },
+    methods: {
+        async login() {
+            this.message = '';
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(this.loginForm)
+            });
+            if (!res.ok) {
+                this.message = '登录失败，请检查用户名密码';
+                return;
+            }
+            const data = await res.json();
+            this.token = data.token;
+            this.user = { role: data.role, displayName: data.displayName, username: this.loginForm.username };
+            await this.loadRankings();
+        },
+        async logout() {
+            await fetch('/api/auth/logout', {
+                method: 'POST',
+                headers: { Authorization: 'Bearer ' + this.token }
+            });
+            this.token = null;
+            this.user = {};
+            this.myStudent = null;
+            this.myScores = [];
+            this.pendingScores = [];
+            this.rankings = [];
+            this.rankingsLoaded = false;
+            this.message = '已退出登录';
+        },
+        async loadRankings() {
+            const headers = this.token ? { Authorization: 'Bearer ' + this.token } : {};
+            const res = await fetch('/api/students/rankings', { headers });
+            if (res.ok) {
+                const data = await res.json();
+                this.className = data.className || '';
+                this.rankings = data.rankings || [];
+                this.rankingsLoaded = true;
+            } else {
+                this.rankings = [];
+                this.className = '';
+                this.rankingsLoaded = true;
+            }
+        },
+        async loadMyStudent() {
+            const res = await fetch('/api/students/me', { headers: { Authorization: 'Bearer ' + this.token } });
+            this.myStudent = res.ok ? await res.json() : null;
+        },
+        async loadMyScores() {
+            if (!this.myStudent) await this.loadMyStudent();
+            if (!this.myStudent) return;
+            const res = await fetch(`/api/students/${this.myStudent.id}/scores`, { headers: { Authorization: 'Bearer ' + this.token } });
+            this.myScores = res.ok ? await res.json() : [];
+        },
+        async loadCategories() {
+            const res = await fetch('/api/categories', { headers: { Authorization: 'Bearer ' + this.token } });
+            this.categories = res.ok ? await res.json() : [];
+        },
+        async loadStudents() {
+            const res = await fetch('/api/students', { headers: { Authorization: 'Bearer ' + this.token } });
+            this.students = res.ok ? await res.json() : [];
+        },
+        async loadPending() {
+            const res = await fetch('/api/scores/pending', { headers: { Authorization: 'Bearer ' + this.token } });
+            this.pendingScores = res.ok ? await res.json() : [];
+        },
+        async loadTeachers() {
+            const res = await fetch('/api/teachers', { headers: { Authorization: 'Bearer ' + this.token } });
+            return res.ok ? await res.json() : [];
+        },
+        async submitScore() {
+            this.actionMessage = '';
+            const res = await fetch('/api/scores', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + this.token },
+                body: JSON.stringify(this.scoreForm)
+            });
+            if (res.ok) {
+                this.actionMessage = '提交成功，等待管理员审核';
+            } else {
+                this.actionMessage = '提交失败';
+            }
+        },
+        async audit(id, action) {
+            const res = await fetch(`/api/scores/${id}/audit`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + this.token },
+                body: JSON.stringify({ action, comment: action === 'APPROVED' ? '审核通过' : '审核驳回' })
+            });
+            if (res.ok) {
+                this.actionMessage = '审核完成';
+                await this.loadPending();
+            } else {
+                this.actionMessage = '审核失败';
+            }
+        },
+        async registerUser() {
+            this.registerMessage = '';
+            const res = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + this.token },
+                body: JSON.stringify(this.newUser)
+            });
+            if (res.ok) {
+                this.registerMessage = '用户创建成功';
+                this.newUser = { username: '', password: '', displayName: '', role: 'STUDENT' };
+            } else {
+                const error = await res.text();
+                this.registerMessage = '创建失败: ' + error;
+            }
+        },
+        addStudentImportRow() {
+            this.studentImportRows.push({ studentNumber: '', name: '', displayName: '', password: '', role: 'STUDENT', grade: '', className: '' });
+        },
+        removeStudentImportRow(index) {
+            this.studentImportRows.splice(index, 1);
+            if (this.studentImportRows.length === 0) {
+                this.addStudentImportRow();
+            }
+        },
+        async importStudentAccounts() {
+            this.importMessage = '';
+            const res = await fetch('/api/auth/import-students', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + this.token },
+                body: JSON.stringify(this.studentImportRows)
+            });
+            if (res.ok) {
+                const data = await res.json();
+                this.importMessage = `导入成功，共导入 ${data.imported || this.studentImportRows.length} 个学生账号`;
+                this.studentImportRows = [{ studentNumber: '', name: '', displayName: '', password: '', role: 'STUDENT', grade: '', className: '' }];
+                await this.loadStudents();
+                await this.loadRankings();
+            } else {
+                const error = await res.text();
+                this.importMessage = '导入失败: ' + error;
+            }
+        },
+        downloadImportTemplate() {
+            const template = '\uFEFFstudentNumber,name,displayName,password,role,grade,className\nstudent001,张三,张三,student123,STUDENT,高一,1班\nstudent002,李四,李四,student234,CLASS_CADRE,高一,1班\n';
+            const blob = new Blob([template], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'student-import-template.csv';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        },
+        toggleCsvInput() {
+            this.showCsvInput = !this.showCsvInput;
+        },
+        async importCsv() {
+            this.importMessage = '';
+            if (!this.csvText.trim()) {
+                this.importMessage = 'CSV 内容不能为空';
+                return;
+            }
+            try {
+                const rows = this.parseCsvText(this.csvText);
+                if (!rows.length) {
+                    this.importMessage = '未解析到任何可导入的行';
+                    return;
+                }
+                const res = await fetch('/api/auth/import-students', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + this.token },
+                    body: JSON.stringify(rows)
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    this.importMessage = `CSV 导入成功，共导入 ${data.imported || rows.length} 个学生账号`;
+                    this.csvText = '';
+                    this.showCsvInput = false;
+                    this.studentImportRows = [{ studentNumber: '', name: '', displayName: '', password: '', role: 'STUDENT', grade: '', className: '' }];
+                    await this.loadStudents();
+                    await this.loadRankings();
+                } else {
+                    const error = await res.text();
+                    this.importMessage = '导入失败: ' + error;
+                }
+            } catch (error) {
+                this.importMessage = 'CSV 解析失败: ' + error.message;
+            }
+        },
+        parseCsvText(text) {
+            const lines = text.split(/\r?\n/).map(line => line.trim()).filter(line => line);
+            if (lines.length < 2) {
+                return [];
+            }
+            const headers = lines[0].split(',').map(h => h.trim());
+            const required = ['studentNumber', 'name', 'password'];
+            for (const field of required) {
+                if (!headers.includes(field)) {
+                    throw new Error(`缺少必填字段: ${field}`);
+                }
+            }
+            return lines.slice(1).map(line => {
+                const cols = line.split(',').map(col => col.trim());
+                const row = {};
+                headers.forEach((header, index) => {
+                    row[header] = cols[index] || '';
+                });
+                return {
+                    studentNumber: row.studentNumber,
+                    name: row.name,
+                    displayName: row.displayName,
+                    password: row.password,
+                    role: row.role || 'STUDENT',
+                    grade: row.grade,
+                    className: row.className
+                };
+            });
+        }
+    }
+}).mount('#app');
+</script>
+</body>
+</html>

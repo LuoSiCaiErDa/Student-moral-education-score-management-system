@@ -1,0 +1,2025 @@
+摘 要
+随着互联网趋势的到来，各行各业都在考虑利用互联网将自己推广出去，最好方式就是建立自己的互联网系统，并对其进行维护和管理。在现实运用中，应用软件的工作规则和开发步骤，采用Java技术建设学生成绩管理系统。
+
+本设计主要实现集人性化、高效率、便捷等优点于一身的学生成绩管理系统，完成用户管理、课程管理、课程总成绩管理、通知公告管理、成绩申诉管理功能模块。系统通过浏览器与服务器进行通信，实现数据的交互与变更。只需通过一台电脑，动动手指就可以操作系统，实现数据通信管理。整个系统的设计过程都充分考虑了数据的安全、稳定及可靠等问题，而且操作过程简单。本系统通过科学的管理方式、便捷的服务提高了工作效率，减少了数据存储上的错误和遗漏。
+
+学生成绩管理系统使用Java语言，采用基于 MVC模式的JavaEE技术进行开发，使用 MyEclipse 2017 CI 10 编译器编写，数据方面主要采用的是微软的MySQL关系型数据库来作为数据存储媒介，配合前台HTML+CSS 技术完成系统的开发。
+
+关键词：数据通信；Java语言；关系型数据库；数据存储
+
+Design and implementation of student achievement management system
+
+Abstract
+
+With the advent of the Internet trend, all walks of life are considering using the Internet to promote themselves. The best way is to establish their own Internet system and maintain and manage it. In practical application, according to the working rules and development steps of the application software, Java technology is used to build the student achievement management system.
+
+This design mainly realizes the student achievement management system with the advantages of humanization, high efficiency and convenience, and completes the functional modules of user management, course management, total course achievement management, notice and announcement management and achievement appeal management. The system communicates with the server through the browser to realize the interaction and change of data. You can operate the system and realize data communication management by moving your fingers through a computer. The safety, stability and reliability of data are fully considered in the design process of the whole system, and the operation process is simple. Through scientific management and convenient service, the system improves work efficiency and reduces errors and omissions in data storage.
+
+The student achievement management system uses Java language and Java EE technology based on MVC mode. It is written with MyEclipse 2017 CI 10 compiler. In terms of data, it mainly uses Microsoft's MySQL relational database as the data storage medium, and completes the development of the system with the foreground HTML + CSS technology.
+
+Key words: Data communication; Java language; Relational database; data storage
+
+目  录
+
+第1章 绪论
+
+1.1 研究背景与意义
+
+1.2 开发现状
+
+1.3 本文的组织结构
+
+第2章 相关技术介绍
+
+2.1 ssm框架介绍
+
+2.2 MVVM模式介绍
+
+2.3 B/S体系结构介绍
+
+2.4 B/S体系工作原理
+
+2.5 Vue.js 主要功能
+
+2.6 JavaScript 运行模式 5
+
+第3章 系统分析 6
+
+3.1 可行性分析 6
+
+3.1.1 技术可行性分析 6
+
+3.1.2 经济可行性分析 6
+
+3.1.3 操作可行性分析 6
+
+3.2 功能需求分析 6
+
+3.3 非功能需求分析 8
+
+3.4 数据流程分析 9
+
+第4章 系统设计
+
+4.1 系统架构设计
+
+4.2 系统功能结构
+
+4.3 功能模块设计
+
+4.4 数据库设计
+
+4.4.1 概念模型
+
+4.4.2 关系模型
+
+4.4.3 数据表
+
+第5章 系统实现
+
+5.1 登录模块的实现
+
+5.2 用户子系统模块的实现 22
+
+5.2.1 用户首页模块 22
+
+5.2.2 课程管理模块 23
+
+5.3 管理员子系统模块的实现
+
+5.3.1 学生管理模块
+
+5.3.2 个人资料模块
+
+5.3.3 课程管理模块
+
+5.3.4 教师管理模块
+
+5.3.5 成绩申诉管理模块 31
+
+第6章 系统测试
+
+6.1 测试目的
+
+6.2 测试过程
+
+6.3 测试结果
+
+第7章 总结与展望
+
+参考文献
+
+致谢
+
+第一章  绪论
+1.1  研究背景与意义
+在21世纪的科技时代，科学技术突飞猛进，计算机已经不仅是在科技上应用，而且在生活中也是同样得到了广泛在应用。如今，不管是小学、初中、高中、甚至是很多大学的学生成绩分析基本上是靠人工进行管理，但随着时间的变化，学校规模的扩大，有关学生成绩分析工作和所涉及到的数据量越来越大越来越多，大多数学校不得不靠增加人力、物力、财力来进行学生成绩管理。但是人工管理成绩档案具有效率低、查找麻烦、可靠性不高、保密性低等因素。因此开发出一个适用于中学通用的学生成绩管理系统是必要的。
+
+开发一个学生成绩管理系统，采用计算机对学生成绩进行处理，进一步提高了办学效益和现代化水平。为广大教师和学生提高工作效率，实现学生成绩信息管理工作流程的系统化、规范化和自动化。现在我国中学的学生成绩档案管理水平普遍都不是很高，有的还停留在全用纸介质基础上，这种管理方式已不能适应时代的发展，社会的需求，因为它浪费了大量的人力物力，也存在着许多不足的因素。在今天信息时代这种传统的管理方法必然会被计算机为基础的信息管理系统所代替。一个高效的学生成绩管理系统可以存储历届的学生成绩档案，不需要大量的人力，只需要几名专门录入员即可操作系统，节省大量人力，可以迅速查到所需信息、高效、安全，学生在能方便的查看自己的成绩。
+
+1.2 开发现状
+学生成绩管理是各学校的主要日常管理工作之一，涉及到校、系、师、生的诸多方面，随着教学体制的不断改革，尤其是学分制、选课制的展开和深入，学生成绩日常管理工作及保存管理日趋繁重、复杂。迫切需要研制开发一款功能强大，操作简单，具有人性化的学生成绩管理系统。
+
+在国外学校，与国内不同，他们一般具有较大规模的稳定的技术队伍来提供服务与技术支持。而国内学校信息化建设相对起步较晚。在数字校园理论逐步应用的过程中，各学校一方面不断投资购建各种硬件、系统软件和网络，另一方面也不断开发实施了各类教学、科研、办公管理等应用系统，形成了一定规模的信息化建设体系。但是，由于整体信息化程度相对落后，经费短缺，理论体系不健全等原因，国内学校教务管理系统在机构设置、服务范围、服务质量及人员要求上与国外学校相比都有一定的差距。  
+
+纵观目前国内研究现状，在安全性和信息更新化方面存在有一定的不足，各现有系统资料单独建立，共享性差；在以管理者为主体的方式中，信息取舍依赖管理者对于信息的认知与喜好，较不容易掌握用户真正的需求，也因此无法完全满足用户的需求。因此，教务管理软件应充分依托校园网，实现教务信息的集中管理、分散操作、信息共享，使传统的教务管理朝数字化、无纸化、智能化、综合化的方向发展，并为进一步实现完善的计算机教务管理系统和全校信息系统打下良好的基础。
+
+1.3 本文的组织结构
+第一章是绪论，本文章的开头部分，对本题目的研究背景和研究意义等一些做文字性的描述。
+
+第二章研究了学生成绩管理系统的所采用的开发技术和开发工具。
+
+第三章是系统分析部分，包括系统总体需求描述、功能性角度分析系统需求、非功能性等各个方面分析系统是否可以实现。
+
+第四章是系统设计部分，本文章的重要部分，提供了系统架构的详细设计和一些主要功能模块的设计说明。
+
+第五章是系统的具体实现，介绍系统的各个模块的具体实现。
+
+第六章在前几章的基础上对系统进行测试和运行。
+
+最后对系统进行了认真的总结，以此对未来有一个新的展望。
+
+第二章  相关技术介绍
+2.1 ssm框架介绍
+SSM（Spring+SpringMVC+MyBatis）框架集由Spring、MyBatis两个开源框架整合而成（SpringMVC是Spring中的部分内容）。常作为数据源较简单的web项目的框架。
+
+Spring
+Spring就像是整个项目中装配bean的大工厂，在配置文件中可以指定使用特定的参数去调用实体类的构造方法来实例化对象。也可以称之为项目中的粘合剂。
+Spring的核心思想是IoC（控制反转），即不再需要程序员去显式地`new`一个对象，而是让Spring框架帮你来完成这一切。
+SpringMVC
+SpringMVC在项目中拦截用户请求，它的核心Servlet即DispatcherServlet承担中介或是前台这样的职责，将用户请求通过HandlerMapping去匹配Controller，Controller就是具体对应请求所执行的操作。SpringMVC相当于SSH框架中struts。
+  mybatis
+mybatis是对jdbc的封装，它让数据库底层操作变的透明。mybatis的操作都是围绕一个sqlSessionFactory实例展开的。mybatis通过配置文件关联到各实体类的Mapper文件，Mapper文件中配置了每个类对数据库所需进行的sql语句映射。在每次与数据库交互时，通过sqlSessionFactory拿到一个sqlSession，再执行sql命令。
+
+页面发送请求给控制器，控制器调用业务层处理逻辑，逻辑层向持久层发送请求，持久层与数据库交互，后将结果返回给业务层，业务层将处理逻辑发送给控制器，控制器再调用视图展现数据。
+
+2.2 MVVM模式介绍
+MVVM是Model-View-ViewModel的简写。它本质上就是MVC 的改进版。MVVM 就是将其中的View 的状态和行为抽象化，让我们将视图 UI 和业务逻辑分开。当然这些事 ViewModel 已经帮我们做了，它可以取出 Model 的数据同时帮忙处理 View 中由于需要展示内容而涉及的业务逻辑。微软的WPF带来了新的技术体验，如Silverlight、音频、视频、3D、动画……，这导致了软件UI层更加细节化、可定制化。同时，在技术层面，WPF也带来了 诸如Binding、Dependency Property、Routed Events、Command、DataTemplate、ControlTemplate等新特性。MVVM（Model-View-ViewModel）框架的由来便是MVP（Model-View-Presenter）模式与WPF结合的应用方式时发展演变过来的一种新型架构框架。它立足于原有MVP框架并且把WPF的新特性糅合进去，以应对客户日益复杂的需求变化。
+
+2.3 B/S体系结构介绍
+B/S结构（Browser/Server，浏览器/服务器模式），是WEB兴起后的一种网络结构模式，WEB浏览器是客户端最主要的应用软件。这种模式统一了客户端，将系统功能实现的核心部分集中到服务器上，简化了系统的开发、维护和使用。客户机上只要安装一个浏览器，如Chrome、Safari、Microsoft Edge、Netscape Navigator或Internet Explorer，服务器安装SQL Server、Oracle、MYSQL等数据库。浏览器通过Web Server同数据库进行数据交互。 
+
+2.4 B/S体系工作原理
+B/S架构采取浏览器请求，服务器响应的工作模式。
+
+用户可以通过浏览器去访问Internet上由Web服务器产生的文本、数据、图片、动画、视频点播和声音等信息；
+
+而每一个Web服务器又可以通过各种方式与数据库服务器连接，大量的数据实际存放在数据库服务器中；
+
+从Web服务器上下载程序到本地来执行，在下载过程中若遇到与数据库有关的指令，由Web服务器交给数据库服务器来解释执行，并返回给Web服务器，Web服务器又返回给用户。在这种结构中，将许许多多的网连接到一块，形成一个巨大的网，即全球网。而各个企业可以在此结构的基础上建立自己的Internet。
+
+在 B/S 模式中，用户是通过浏览器针对许多分布于网络上的服务器进行请求访问的，浏览器的请求通过服务器进行处理，并将处理结果以及相应的信息返回给浏览器，其他的数据加工、请求全部都是由Web Server完成的。通过该框架结构以及植入于操作系统内部的浏览器，该结构已经成为了当今软件应用的主流结构模式。
+
+2.5 Vue.js 主要功能
+Vue.js是一套构建用户界面的渐进式框架。与其他重量级框架不同的是，Vue采用自底向上增量开发的设计。Vue 的核心库只关注视图层，并且非常容易学习，非常容易与其它库或已有项目整合。另一方面，Vue 完全有能力驱动采用单文件组件和Vue生态系统支持的库开发的复杂单页应用。
+
+Vue.js 的目标是通过尽可能简单的 API 实现响应的数据绑定和组合的视图组件。
+
+Vue.js 自身不是一个全能框架——它只聚焦于视图层。因此它非常容易学习，非常容易与其它库或已有项目整合。另一方面，在与相关工具和支持库一起使用时，Vue.js 也能驱动复杂的单页应用。
+
+2.6 JavaScript 运行模式
+JavaScript是一种属于网络的高级脚本语言,已经被广泛用于Web应用开发,常用来为网页添加各式各样的动态功能,为用户提供更流畅美观的浏览效果。通常JavaScript脚本是通过嵌入在HTML中来实现自身的功能的。
+
+是一种解释性脚本语言（代码不进行预编译）。
+
+主要用来向HTML（标准通用标记语言下的一个应用）页面添加交互行为。
+
+可以直接嵌入HTML页面，但写成单独的js文件有利于结构和行为的分离。
+
+跨平台特性，在绝大多数浏览器的支持下，可以在多种平台下运行（如Windows、Linux、Mac、Android、iOS等）。
+
+ JavaScript脚本语言同其他语言一样，有它自身的基本数据类型，表达式和算术运算符及程序的基本程序框架。JavaScript提供了四种基本的数据类型和两种特殊数据类型用来处理数据和文字。而变量提供存放信息的地方，表达式则可以完成较复杂的信息处理。
+
+第三章  系统分析
+3.1 可行性分析
+本次设计基于B/S 模式下，运用Java、JSP技术采用的是MySQL数据库和Myeclipse实现，总体的可行性共分为以下三个方面。
+
+3.1.1 技术可行性分析
+所谓的技术可行性就是在限定时间，前期拟定的功能能否被满足。在开发设计上是否会遇上解决不了的问题。做完的项目能否被很好地应用，如果存在缺点在后期的维护上是否存在很大的难度。在对这个系统评估后，认定已存在的技术能达成目标。用JSP技术来实现动态的页面，嵌入低依赖性的设计模式，灵活的数据库，配合稳定的服务器，整个系统的运行效率大大提升。由此可见，在技术层面达成目标不是非非之想。
+
+3.1.2 经济可行性分析
+在项目上使用的工具大部分都是是当下流行开源免费的，所以在开发前期，开发时用于项目的经费将会大大降低，不会让开发该软件在项目启动期受到经费的影响，所以经济上还是可行的。尽量用最少的花费去满足用户的需求。省下经费用于人工费，以及设备费用。将在无纸化，高效率的道路上越走越远。
+
+3.1.3 操作可行性分析
+本系统实现功能的操作很简单，普通电脑的常见配置就可以运行本软件，并且只要粗通电脑使用的基本常识就可以流畅的使用本软件。电脑具备连接互联网的能力，并且可以正常访问系统，并不需要操作者有什么高超的能力，只需了解业务流程，并且按照专业知识进行正确操作即可，所以学生成绩管理系统具备操作可行性。
+
+3.2 功能需求分析
+在系统开发设计前，应该对功能做初步设想，清楚这个管理系统有什么板块，每个板块有什么功能，整体的设计是否满足使用者的需求，接着对所开发的系统功能进行的详细分析总结，从而设计出完整的系统并将其实现。用户和开发人员的交流分析，使其达到最佳理解程度，使系统功能达到最佳。
+
+学生用例图如下所示。
+
+
+
+图3-1 学生用例图
+
+管理员用例图如下所示。
+
+
+
+图3-2 管理员用例图
+
+教师用例图如下所示。
+
+
+
+图3-3 教师用例图
+
+学生成绩管理系统在对需求做解析后，整个系统主要分为两个部分：管理员和普通用户，每个模块下的分支功能不一样。对功能做出如下说明：
+
+学生模块：
+
+账号登录认证。
+
+管理个人资料信息，修改可修改的信息项。
+
+课程成绩查询，同时查看历史已有成绩的记录。
+
+教师模块：
+
+提交学生成绩，同时查看历史已提交的学生成绩记录。
+
+课程总成绩查询，同时查看历史已有成绩的记录。
+
+管理员模块：
+
+维护学生，审核学生的账号，可以冻结学生的登录权限，或者删除学生账号。
+
+发布课程，并可以销毁某个课程，更新课程数据，模糊搜索课程数据等。
+
+发布教师，并可以销毁某个教师，更新教师数据，模糊搜索教师数据等。
+
+管理课程成绩数据。
+
+查看教师提交的学生成绩数据，管理员有权利维护它。
+
+3.3 非功能需求分析
+系统非功能需求有非常多，比如性能需求、可承载最大用户数、稳定性、易用性需求等。本系统分析时考虑到易用性需求，因为系统是给人使用的，所以必须充分从用户的角度出发，考虑用户体验，使系统易理解易上手易操作。
+
+3.4 数据流程分析
+零层数据流程图包括了登录、用户功能和检索维护等模块，在登录模块使用到的数据存储有用户账户文档，用户功能模块需要的存储是用户各功能模块数据文档，检索维护是使用以上这些数据文档通过关键词进行检索。
+
+系统的零层数据流图如下图所示。
+
+
+
+图3-2系统数据流图（零层）
+
+一层数据流程图是对零层数据流程图的细化，将登录细分为填制登录数据和完善数据，用户功能细分为用户基本功能和用户主要功能。
+
+系统的一层数据流图如下图所示。
+
+
+
+图3-3系统数据流图（一层）
+
+二层数据流程是对一层数据流层图中填写登录信息、用户功能的细化。即：填写登录信息细化为填制信息、后台审核，用户功能细化为学生成绩录入、课程查询、公告查询等操作。
+
+系统的二层数据流图如下图所示。
+
+
+
+图3-4系统数据流图（二层）
+
+第四章  系统设计
+4.1 系统架构设计
+目前B/S体系的系统主要的数据访问方式是：通过浏览器页面用户可以进入系统，系统可以自动对用户向服务器发送的请求进行处理，处理请求是在系统后台中进行的，用户在浏览器页面上进行相应操作，就能够看到服务端传递的处理结果。学生成绩管理系统主要分为视图-模型-控制三层架构设计。在视图层中，主要是操作在服务器端向客户端反馈并显示的数据，在模型层中，主要处理相关的业务逻辑、数据整合等，最后的控制层它介于视图和模型之间，主要是调整两层之间的关系，最终落实数据的传递。
+
+系统架构图如下图所示。
+
+
+
+图4-1系统架构图
+
+4.2 系统功能结构
+系统设计的目的是分析系统包括的所有功能结构，为开发人员设计开发和实现系统做好准备工作。经过前期的需求调查、分析和整理之后，确定的总体需求主要包括多个模块，分别是：用户管理、课程管理、公告管理、课程总成绩管理、通知公告管理、成绩申诉管理数据备份。系统整体角色分为三个部分，一是学生、二是教师、最后是管理员。权限分布也是很明显，普通用户是在除去浏览信息之外还具有查询和管理自己账户信息、教师资料修改、学生成绩录入、课程查询、公告查询、学生资料修改、成绩查询、课程查询、公告查询等权限；管理员是最高权限拥有者。
+
+系统功能结构图如下图所示。
+
+
+
+图4-2系统功能结构图
+
+4.3 功能模块设计
+用户管理模块
+
+该模块是为所有用户登录设计的，如学生用户这种普通用户登录后只能进行自己的普通功能操作(如个人信息修改），管理员和超级管理员登录后有不同的权限，管理员不能超越权限。超级管理员能对整个系统的数据进行管理，主要是用户的登录权限以及用户登录后在系统里的操作权限。
+
+课程总成绩模块
+
+学生和课程存在成绩关系，关系为一对多，根据课程编号来将课程数据传入到成绩数据中，操作人为教师用户，然后生成成绩列表，学生查看个人历史成绩列表，可以进行数据销毁。
+
+课程维护模块
+
+操作人来录入课程数据，点击课程录入按钮，依次填写要录入的课程数据，点击提交按钮，将数据提交至数据库，然后刷新课程数据页面，每条数据右边有删除和编辑按钮，来完成相应的删除和更新功能。
+
+教师维护模块
+
+操作人来录入教师数据，点击教师录入按钮，依次填写要录入的教师数据，点击提交按钮，将数据提交至数据库，然后刷新教师数据页面，每条数据右边有删除和编辑按钮，来完成相应的删除和更新功能。
+
+公告维护模块
+
+管理员点击公告管理菜单，点击公告添加子菜单，添加公告数据，填写标题、内容、类别、图片，提交成功后，公告数据页面刷新，新数据成功载入页面。
+
+打印和导出模块
+
+系统多个页面可以进行打印功能，包括信息详细页，信息列表页，打印时调用外部打印机，完成打印设置即可打印，在信息列表页可以将该信息列表导出至excel中，用户选择保存excel文件的路径，既可以下载至本地，在excel中可以自由编辑。
+
+4.4 数据库设计
+4.4.1 概念模型
+对于一个要开发的系统来说，E-R图可以让别人能更快更轻松的了解此系统的事务及它们之间的关系。根据系统分析阶段所得出的结论确定了在学生成绩管理系统中存在着多个实体分别是用学院、课程、学生、教师、学生成绩。
+
+系统总体ER图如下图所示。
+
+
+
+图4-4系统总体ER图
+
+4.4.2 关系模型
+管理员（管理员id、用户名、密码、权限）
+
+公告数据（公告id、标题、相关附件、内容、发布人）
+
+课程管理（课程管理id、课程编号、课程名称、课程类型、教师工号、学院、专业、班级名称）
+
+成绩预警（成绩预警id、学号、不及格科目、预警内容）
+
+教师（教师id、教师工号、审核状态）
+
+成绩申诉（成绩申诉id、课程编号、课程名称、教师工号、学号、平时成绩、考试成绩、总成绩、申诉内容、审核状态、审核回复）
+
+学生（学生id、学号、院系、专业、年级、班级名称、审核状态）
+
+课程总成绩（课程总成绩id、课程编号、课程名称、学号、平时成绩、平时成绩比例、考试成绩、考试成绩比例、总成绩、成绩等级、教师工号、学院、专业、班级名称）
+
+4.4.3 数据表
+数据库逻辑结构就是将E-R图在数据库中用具体的字段进行描述。用字段和数据类型描述来使对象特征实体化，最后形成具有一定逻辑关系的数据库表结构。学生成绩管理系统所需要的部分数据结构表如下表所示。
+
+achievement_appeal表:
+
+字段名称
+
+类型
+
+长度
+
+不是null
+
+主键
+
+字段说明
+
+achievement_appeal_id
+
+int
+
+11
+
+是
+
+是
+
+成绩申诉ID
+
+course_number
+
+varchar
+
+64
+
+否
+
+否
+
+课程编号
+
+course_name
+
+varchar
+
+64
+
+否
+
+否
+
+课程名称
+
+teacher_job_number
+
+int
+
+11
+
+否
+
+否
+
+教师工号
+
+student_number
+
+int
+
+11
+
+否
+
+否
+
+学号
+
+usual_performance
+
+varchar
+
+64
+
+否
+
+否
+
+平时成绩
+
+examination_results
+
+varchar
+
+64
+
+否
+
+否
+
+考试成绩
+
+total_score
+
+varchar
+
+64
+
+否
+
+否
+
+总成绩
+
+appeal_content
+
+text
+
+0
+
+否
+
+否
+
+申诉内容
+
+examine_state
+
+varchar
+
+16
+
+是
+
+否
+
+审核状态
+
+examine_reply
+
+varchar
+
+255
+
+否
+
+否
+
+审核回复
+
+recommend
+
+int
+
+11
+
+是
+
+否
+
+智能推荐
+
+create_time
+
+datetime
+
+0
+
+是
+
+否
+
+创建时间
+
+update_time
+
+timestamp
+
+0
+
+是
+
+否
+
+更新时间
+
+achievement_warning_表:
+
+字段名称
+
+类型
+
+长度
+
+不是null
+
+主键
+
+字段说明
+
+achievement_warning_id
+
+int
+
+11
+
+是
+
+是
+
+成绩预警ID
+
+student_number
+
+int
+
+11
+
+否
+
+否
+
+学号
+
+failed_subjects
+
+varchar
+
+64
+
+否
+
+否
+
+不及格科目
+
+early_warning_content
+
+text
+
+0
+
+否
+
+否
+
+预警内容
+
+recommend
+
+int
+
+11
+
+是
+
+否
+
+智能推荐
+
+create_time
+
+datetime
+
+0
+
+是
+
+否
+
+创建时间
+
+update_time
+
+timestamp
+
+0
+
+是
+
+否
+
+更新时间
+
+course_management表:
+
+字段名称
+
+类型
+
+长度
+
+不是null
+
+主键
+
+字段说明
+
+course_management_id
+
+int
+
+11
+
+是
+
+是
+
+课程管理ID
+
+course_number
+
+varchar
+
+64
+
+否
+
+否
+
+课程编号
+
+course_type
+
+varchar
+
+64
+
+否
+
+否
+
+课程类型
+
+course_name
+
+varchar
+
+64
+
+否
+
+否
+
+课程名称
+
+teacher_job_number
+
+int
+
+11
+
+否
+
+否
+
+教师工号
+
+college
+
+varchar
+
+64
+
+否
+
+否
+
+学院
+
+major
+
+varchar
+
+64
+
+否
+
+否
+
+专业
+
+class_name
+
+varchar
+
+64
+
+否
+
+否
+
+班级名称
+
+recommend
+
+int
+
+11
+
+是
+
+否
+
+智能推荐
+
+create_time
+
+datetime
+
+0
+
+是
+
+否
+
+创建时间
+
+update_time
+
+timestamp
+
+0
+
+是
+
+否
+
+更新时间
+
+notice_announcement表:
+
+字段名称
+
+类型
+
+长度
+
+不是null
+
+主键
+
+字段说明
+
+notice_announcement_id
+
+int
+
+11
+
+是
+
+是
+
+通知公告ID
+
+title
+
+varchar
+
+64
+
+否
+
+否
+
+标题
+
+relevant_attachments
+
+varchar
+
+255
+
+否
+
+否
+
+相关附件
+
+publisher
+
+varchar
+
+64
+
+否
+
+否
+
+发布人
+
+content
+
+text
+
+0
+
+否
+
+否
+
+内容
+
+recommend
+
+int
+
+11
+
+是
+
+否
+
+智能推荐
+
+create_time
+
+datetime
+
+0
+
+是
+
+否
+
+创建时间
+
+update_time
+
+timestamp
+
+0
+
+是
+
+否
+
+更新时间
+
+student表:
+
+字段名称
+
+类型
+
+长度
+
+不是null
+
+主键
+
+字段说明
+
+student_id
+
+int
+
+11
+
+是
+
+是
+
+学生ID
+
+student_number
+
+varchar
+
+64
+
+否
+
+否
+
+学号
+
+faculty
+
+varchar
+
+64
+
+否
+
+否
+
+院系
+
+major
+
+varchar
+
+64
+
+否
+
+否
+
+专业
+
+grade
+
+varchar
+
+64
+
+否
+
+否
+
+年级
+
+class_name
+
+varchar
+
+64
+
+否
+
+否
+
+班级名称
+
+examine_state
+
+varchar
+
+16
+
+是
+
+否
+
+审核状态
+
+recommend
+
+int
+
+11
+
+是
+
+否
+
+智能推荐
+
+user_id
+
+int
+
+11
+
+是
+
+否
+
+用户ID
+
+create_time
+
+datetime
+
+0
+
+是
+
+否
+
+创建时间
+
+update_time
+
+timestamp
+
+0
+
+是
+
+否
+
+更新时间
+
+teacher表:
+
+字段名称
+
+类型
+
+长度
+
+不是null
+
+主键
+
+字段说明
+
+teacher_id
+
+int
+
+11
+
+是
+
+是
+
+教师ID
+
+teacher_job_number
+
+varchar
+
+64
+
+否
+
+否
+
+教师工号
+
+examine_state
+
+varchar
+
+16
+
+是
+
+否
+
+审核状态
+
+recommend
+
+int
+
+11
+
+是
+
+否
+
+智能推荐
+
+user_id
+
+int
+
+11
+
+是
+
+否
+
+用户ID
+
+create_time
+
+datetime
+
+0
+
+是
+
+否
+
+创建时间
+
+update_time
+
+timestamp
+
+0
+
+是
+
+否
+
+更新时间
+
+total_student_score表:
+
+字段名称
+
+类型
+
+长度
+
+不是null
+
+主键
+
+字段说明
+
+total_student_score_id
+
+int
+
+11
+
+是
+
+是
+
+课程总成绩ID
+
+course_number
+
+varchar
+
+64
+
+否
+
+否
+
+课程编号
+
+course_name
+
+varchar
+
+64
+
+否
+
+否
+
+课程名称
+
+student_number
+
+int
+
+11
+
+否
+
+否
+
+学号
+
+usual_performance
+
+varchar
+
+64
+
+否
+
+否
+
+平时成绩
+
+usual_score_ratio
+
+varchar
+
+64
+
+否
+
+否
+
+平时成绩比例
+
+examination_results
+
+varchar
+
+64
+
+否
+
+否
+
+考试成绩
+
+proportion_of_test_scores
+
+varchar
+
+64
+
+否
+
+否
+
+考试成绩比例
+
+total_score
+
+varchar
+
+64
+
+否
+
+否
+
+总成绩
+
+grade
+
+varchar
+
+64
+
+否
+
+否
+
+成绩等级
+
+teacher_job_number
+
+int
+
+11
+
+否
+
+否
+
+教师工号
+
+college
+
+varchar
+
+64
+
+否
+
+否
+
+学院
+
+major
+
+varchar
+
+64
+
+否
+
+否
+
+专业
+
+class_name
+
+varchar
+
+64
+
+否
+
+否
+
+班级名称
+
+recommend
+
+int
+
+11
+
+是
+
+否
+
+智能推荐
+
+create_time
+
+datetime
+
+0
+
+是
+
+否
+
+创建时间
+
+update_time
+
+timestamp
+
+0
+
+是
+
+否
+
+更新时间
+
+第五章 系统实现
+5.1登录模块的实现
+系统的登录窗口是用户的入口，用户只有在登录成功后才可以进入访问。通过在登录提交表单，后台处理判断是否为合法用户，进行页面跳转，进入系统中去。
+
+登录合法性判断过程：用户输入账号和密码后，系统首先确定输入输入数据合法性，然后在login.jsp页面发送登录请求，调用src下的mainctrl类的dopost方法来验证。
+
+用户登录模块的IPO如下所示：
+
+输入：用户名和密码。
+
+处理：
+
+1）检测用户输入的账号、密码是否正确及在数据库已对应存在。
+
+2）从数据库中提取记录，并储存在本地的session中（timeout默认=30min）。
+
+3）根据用户名，将其显示在系统首页上。
+
+输出：是否成功的信息。
+
+登录流程图如下所示。
+
+
+
+图5-1登录流程图
+
+系统登录界面如下所示。
+
+
+
+图5-2系统登录界面
+
+用户登录的逻辑代码如下。
+
+/**
+
+     * 登录
+
+     * @param data
+
+     * @param httpServletRequest
+
+     * @return
+
+     */
+
+    @PostMapping("login")
+
+    public Map<String, Object> login(@RequestBody Map<String, String> data, HttpServletRequest httpServletRequest) {
+
+        log.info("[执行登录接口]");
+
+        String username = data.get("username");
+
+        String email = data.get("email");
+
+        String phone = data.get("phone");
+
+        String password = data.get("password");
+
+        List resultList = null;
+
+        QueryWrapper wrapper = new QueryWrapper<User>();
+
+        Map<String, String> map = new HashMap<>();
+
+        if(username != null && "".equals(username) == false){
+
+            map.put("username", username);
+
+            resultList = service.selectBaseList(service.select(map, new HashMap<>()));
+
+        }
+
+        else if(email != null && "".equals(email) == false){
+
+            map.put("email", email);
+
+            resultList = service.selectBaseList(service.select(map, new HashMap<>()));
+
+        }
+
+        else if(phone != null && "".equals(phone) == false){
+
+            map.put("phone", phone);
+
+            resultList = service.selectBaseList(service.select(map, new HashMap<>()));
+
+        }else{
+
+            return error(30000, "账号或密码不能为空");
+
+        }
+
+        if (resultList == null || password == null) {
+
+            return error(30000, "账号或密码不能为空");
+
+        }
+
+        //判断是否有这个用户
+
+        if (resultList.size()<=0){
+
+            return error(30000,"用户不存在");
+
+        }
+
+        User byUsername = (User) resultList.get(0);
+
+        Map<String, String> groupMap = new HashMap<>();
+
+        groupMap.put("name",byUsername.getUserGroup());
+
+        List groupList = userGroupService.selectBaseList(userGroupService.select(groupMap, new HashMap<>()));
+
+        if (groupList.size()<1){
+
+            return error(30000,"用户组不存在");
+
+        }
+
+        UserGroup userGroup = (UserGroup) groupList.get(0);
+
+        //查询用户审核状态
+
+        if (!StringUtils.isEmpty(userGroup.getSourceTable())){
+
+            String res = service.selectExamineState(userGroup.getSourceTable(),byUsername.getUserId());
+
+            if (res==null){
+
+                return error(30000,"用户不存在");
+
+            }
+
+            if (!res.equals("已通过")){
+
+                return error(30000,"该用户审核未通过");
+
+            }
+
+        }
+
+        //查询用户状态
+
+        if (byUsername.getState()!=1){
+
+            return error(30000,"用户非可用状态，不能登录");
+
+        }
+
+        String md5password = service.encryption(password);
+
+        if (byUsername.getPassword().equals(md5password)) {
+
+            // 存储Token到数据库
+
+            AccessToken accessToken = new AccessToken();
+
+            accessToken.setToken(UUID.randomUUID().toString().replaceAll("-", ""));
+
+            accessToken.setUser_id(byUsername.getUserId());
+
+            tokenService.save(accessToken);
+
+            // 返回用户信息
+
+            JSONObject user = JSONObject.parseObject(JSONObject.toJSONString(byUsername));
+
+            user.put("token", accessToken.getToken());
+
+            JSONObject ret = new JSONObject();
+
+            ret.put("obj",user);
+
+            return success(ret);
+
+        } else {
+
+            return error(30000, "账号或密码不正确");
+
+        }
+
+}
+
+    public String select(Map<String,String> query,Map<String,String> config){
+
+        StringBuffer sql = new StringBuffer("select ");
+
+        sql.append(config.get(FindConfig.FIELD) == null || "".equals(config.get(FindConfig.FIELD)) ? "*" : config.get(FindConfig.FIELD)).append(" ");
+
+        sql.append("from ").append("`").append(table).append("`").append(toWhereSql(query, "0".equals(config.get(FindConfig.LIKE))));
+
+        if (config.get(FindConfig.GROUP_BY) != null && !"".equals(config.get(FindConfig.GROUP_BY))){
+
+            sql.append("group by ").append(config.get(FindConfig.GROUP_BY)).append(" ");
+
+        }
+
+        if (config.get(FindConfig.ORDER_BY) != null && !"".equals(config.get(FindConfig.ORDER_BY))){
+
+            sql.append("order by ").append(config.get(FindConfig.ORDER_BY)).append(" ");
+
+        }
+
+        if (config.get(FindConfig.PAGE) != null && !"".equals(config.get(FindConfig.PAGE))){
+
+            int page = config.get(FindConfig.PAGE) != null && !"".equals(config.get(FindConfig.PAGE)) ? Integer.parseInt(config.get(FindConfig.PAGE)) : 1;
+
+            int limit = config.get(FindConfig.SIZE) != null && !"".equals(config.get(FindConfig.SIZE)) ? Integer.parseInt(config.get(FindConfig.SIZE)) : 10;
+
+            sql.append(" limit ").append( (page-1)*limit ).append(" , ").append(limit);
+
+        }
+
+        log.info("[{}] - 查询操作，sql: {}",table,sql);
+
+        return sql.toString();
+
+}
+
+    public List selectBaseList(String select) {
+
+        List<Map<String,Object>> mapList = baseMapper.selectBaseList(select);
+
+        List<E> list = new ArrayList<>();
+
+        for (Map<String,Object> map:mapList) {
+
+            list.add(JSON.parseObject(JSON.toJSONString(map),eClass));
+
+        }
+
+        return list;
+
+}
+
+5.2 用户子系统模块的实现
+5.2.1 用户首页模块
+系统呈现出一种简洁大方的首页：界面简约、鳞次栉比，用户能轻车熟路的使用。出于对系统使用群体广泛的顾虑，应有良好性能的后台。如下图所示为系统的首页界面。
+
+
+
+图5-3系统首页界面
+
+其中载入前台页面的主要代码如下。
+
+package com.project.demo.constant;
+
+/**
+
+ */
+
+public class FindConfig {
+
+    public static String PAGE = "page";
+
+    public static String SIZE = "size";
+
+    public static String LIKE = "like";
+
+    public static String ORDER_BY = "orderby";
+
+    public static String FIELD = "field";
+
+    public static String GROUP_BY = "groupby";
+
+    public static String MIN_ = "_min";
+
+    public static String MAX_ = "_max";
+
+}
+
+5.2.2 课程管理模块
+课程录入过程中，首先使用getmap(id,"xinxi")，通过课程ID得到课程数据，将课程数据赋值给课程成绩，调用CommDAO的insert方法将成绩数据插入成绩表中，最后查看个人历史课程成绩记录，可以销毁历史成绩数据。
+
+课程成绩录入流程图如下所示。
+
+
+
+图5-4课程总成绩录入流程图
+
+课程总成绩录入界面如图所示。
+
+
+
+图5-5课程总成绩录入界面
+
+课程管理界面如图所示。
+
+
+
+图5-6课程管理界面
+
+课程添加关键代码如下所示。
+
+@PostMapping("/add")
+
+    @Transactional
+
+    public Map<String, Object> add(HttpServletRequest request) throws IOException {
+
+        service.insert(service.readBody(request.getReader()));
+
+        return success(1);
+
+    }
+
+    @Transactional
+
+    public Map<String, Object> addMap(Map<String,Object> map){
+
+        service.insert(map);
+
+        return success(1);
+
+5.3 管理员子系统模块的实现
+5.3.1 学生管理模块
+学生在yhzhgl查看学生信息，先使用sql语句查询出所有学生表的数据，然后调用PageManager.getPages(url,4,sql, request )，返回一个ArrayList的对象，在for循环里，使用jsp得到每个ArrayList对象的数据，在jsp页面中解析ArrayList对象，得到其各个键值对的值。
+
+学生管理界面如下图所示。
+
+
+
+图5-7学生管理界面
+
+系统学生管理关键代码如下所示。
+
+   @PostMapping("/set")
+
+@Transactional
+
+    public Map<String, Object> set(HttpServletRequest request) throws IOException {
+
+        service.update(service.readQuery(request), service.readConfig(request), service.readBody(request.getReader()));
+
+        return success(1);
+
+}
+
+个人资料模块
+
+用户点击登录填写账号信息登录后，会切换内容为“某某用户欢迎您”和历史订单，并给出注销链接。当用户登录成功后会将个人信息保存在session作用域中，点击自己的用户名时，会跳转到个人详细信息页面，由后台通过Freemarker取出session作用域中的用户信息进行动态渲染，例如，邮箱、电话号码、用户名等等。同时页面上会显示修改个人信息和修改密码的按钮，这时客户可以修改自己的登录密码以保障账号的安全性，防止被人窃取账号，通过UserController.java的updatePassword()实现，同时也可以根据自己的个人信息是否变动做出相应的修改，通过updateUserInfo()实现。
+
+密码修改流程图如下所示。
+
+
+
+图5-8密码修改流程图
+
+密码修改关键代码如下所示。
+
+public String encryption(String plainText) {
+
+        String re_md5 = new String();
+
+        try {
+
+            MessageDigest md = MessageDigest.getInstance("MD5");
+
+            md.update(plainText.getBytes());
+
+            byte b[] = md.digest();
+
+            int i;
+
+            StringBuffer buf = new StringBuffer("");
+
+            for (int offset = 0; offset < b.length; offset++) {
+
+                i = b[offset];
+
+                if (i < 0)
+
+                    i += 256;
+
+                if (i < 16)
+
+                    buf.append("0");
+
+                buf.append(Integer.toHexString(i));
+
+            }
+
+            re_md5 = buf.toString();
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
+        return re_md5;
+
+}
+
+5.3.2 课程管理模块
+添加课程信息时，输入必填字段后，表现层的KechengController接受传过来的课程信息参数，再调用KechengController类的addKecheng方法，经过KechengService业务层到KechengMapper持久层的处理，完成对整个添加课程信息的操作。addKecheng方法也和用户管理中的addUser方法类似，同时做添加和修改工作。
+
+修改课程信息时，选择需要修改的课程进行修改，调用KechengController控制器的editKecheng方法，拿到该课程原本的信息并显示到页面，管理员再对需要修改的课程信息字段进行修改，完成后调用addKecheng方法，调用业务层的updateByKey方法，更新数据库的课程信息表的数据。
+
+课程管理流程图如下所示。
+
+
+
+图5-9课程管理流程图
+
+课程添加界面如下图所示。
+
+
+
+图5-10课程添加界面
+
+课程查询界面如下图所示。
+
+
+
+图5-11课程查询界面
+
+课程信息添加关键代码如下所示。
+
+  @RequestMapping(value = "/del")
+
+    @Transactional
+
+    public Map<String, Object> del(HttpServletRequest request) {
+
+        service.delete(service.readQuery(request), service.readConfig(request));
+
+        return success(1);
+
+}
+
+5.3.3 教师管理模块
+删除教师时，选择需要删除的教师进行删除，把主键的uId传到JiaoshiController控制器，再调用控制器的deleteJiaoshi方法，数据经过JiaoshiService业务层解析和处理，请求JiaoshiMapper持久层调用deleteByPrimaryKey方法操作数据库将教师数据从数据库中删除。
+
+查找教师时，输入需要查找的教师名，调用getData方法获取所有数据并且进行分页，把获取到的所有数据显示到视图上，这时候只需要用脚本方法便能快速查找，不涉及对数据库操作。
+
+教师管理流程图如下所示。
+
+
+
+图5-12教师管理流程图
+
+教师添加界面如下图所示。
+
+
+
+图5-13教师添加界面
+
+教师查询界面如下图所示。
+
+
+
+图5-14教师查询界面
+
+教师信息添加关键代码如下所示。
+
+@PostMapping("/set")
+
+@Transactional
+
+    public Map<String, Object> set(HttpServletRequest request) throws IOException {
+
+        service.update(service.readQuery(request), service.readConfig(request), service.readBody(request.getReader()));
+
+        return success(1);
+
+}
+
+5.3.4 成绩申诉管理模块
+添加成绩申诉信息时，输入必填字段后，表现层的KechengController接受传过来的成绩申诉参数，再调用KechengController类的addKecheng方法，经过KechengService业务层到KechengMapper持久层的处理，完成对整个添加成绩申诉信息的操作。addKecheng方法也和用户管理中的addUser方法类似，同时做添加和修改工作。
+
+修改成绩申诉时，选择需要修改的成绩申诉进行修改，调用KechengController控制器的editKecheng方法，拿到该成绩申诉原本的信息并显示到页面，管理员再对需要修改的成绩申诉信息字段进行修改，完成后调用addKecheng方法，调用业务层的updateByKey方法，更新数据库的成绩申诉信息表的数据。
+
+成绩申诉管理流程图如下所示。
+
+
+
+图5-15成绩申诉流程界面
+
+成绩申诉的界面如下图所示。
+
+
+
+图5-16成绩申诉界面
+
+第六章  系统测试
+6.1 测试目的
+在对该系统进行完详细设计和编码之后，就要对学生成绩管理系统的程序进行测试，检测程序是否运行无误，反复进行测试和修改，使之最后成为完整的软件，满足用户的需求，实现预期的功能。
+
+6.2 测试过程
+在软件的测试过程中，通常测试人员需要针对不同的功能模块设计多种测试用例。通过测试用例能够及时发现代码业务逻辑上是否与真实的业务逻辑相对应，及时发现代码上或逻辑上的缺陷，以此来来完善系统，提高软件产品的质量，使软件具有良好的用户体验。
+
+登录测试用例表如下所示。
+
+表6-1登录测试用例
+
+测试性能
+
+用户或操作员登录系统
+
+用例目的
+
+测试用户或操作员登录系统时功能是否正常
+
+前提条件
+
+进入用户登录页面或操作员登录页面
+
+输入条件
+
+预期输出
+
+实际情况
+
+各项信息不予填写，直接点击登陆按钮
+
+不允许登录，提示填写账号相关信息
+
+一致
+
+填写错误的登录名或密码后点击登录系统
+
+提示用户名或密码错误，要求重新填写进行登录
+
+一致
+
+填写与验证码信息不一致的信息
+
+系统显示出提示信息，表明验证码错误，要求重新填写
+
+一致
+
+课程总成绩测试用例表如下所示。
+
+表6-2课程总成绩测试用例
+
+测试性能
+
+用户进行课程成绩的操作
+
+用例目的
+
+测试用户进行成绩课程操作时，系统的功能是否正常
+
+前提条件
+
+用户进入课程详情页，该课程能够被成绩
+
+输入条件
+
+预期输出
+
+实际情况
+
+用户未登录，点击成绩按钮
+
+跳转至登录页面，提示用户先进性登录
+
+一致
+
+正常的登录用户，点击成绩按钮
+
+系统弹出提示框，提示用户成绩成功，同时该课程的状态更改为已成绩状态
+
+一致
+
+课程管理测试用例表如下所示。
+
+表6-3课程管理测试用例
+
+测试性能
+
+课程相关信息管理功能
+
+用例目的
+
+测试系统后台操作员对课程相关信息进行管理的功能是否正常
+
+前提条件
+
+登录系统后台进入相关管理页面
+
+输入条件
+
+预期输出
+
+实际情况
+
+普通操作员登录，点击进入课程相关信息管理的页面
+
+提示非超级用户，权限不够，无法进入相关页面
+
+一致
+
+超级操作员登入，删除某个已被成绩的课程
+
+提示该课程删除失败
+
+一致
+
+点击增加课程按钮
+
+页面正常跳转
+
+一致
+
+增加课程是，填写已存在的课程编号
+
+提示该编号已存在
+
+一致
+
+6.3 测试结果
+经过对此系统的测试，得出该系统足以满足用户日常需求，在功能项目和操作等方面也能满足操作员对于其他用户的管理。但是，还有很多功能有待添加，这个系统仅能满足大部分的需求，还需要对此系统的功能更进一步的完善，这样使用起来才能更加的完美。
+
+第七章  总结与展望
+通过学生成绩管理系统的开发，本人巩固了之前学过的知识，如今将平时所学到的知识融合在设计中，在设计过程中，做了很多的准备，首先，在数据库系统的设计过程中，尤其是在数据库的工作原理、工作特点，对其深刻的讨论，与此同时，对于小型站点来说，最好服务器的选择，其次，利用所学的知识点分析所做的系统，并在此基础上设计。
+
+目前本系统已经上线，正在试运行阶段，用户反馈良好，基本完成用户所需，试运行过程中没有出现阻断性问题，有一些不足和小问题也及时予以修正，系统上线后，为了保证数据的安全性，对系统进行了备份操作，系统备份是每两个月备份一次，数据库备份为每周备份一次，系统部署在租赁的云平台服务器中。
+
+本次系统上线成功后，得到了用户的高度认可，但是在功能上和性能上还需做进一步的研究处理，使其有更高的性能和更好的用户体验。
+
+系统在以后的升级过程中，需要解决一系列用户所提出的问题，例如打印过程中如何避免浏览器的兼容性问题，大量用户访问时，如何保持较高的响应速度，在系统今后的升级过程中将着重解决这些安全性问题。
+
+参考文献
+[1]沈小莲,梁晓楠,刘京. 一种基于学生成长档案的管理系统及方法[P]. 广东省：CN113569544A,2021-10-29.
+
+[2]贾帅. 一种基于多重数字签名的学生成绩管理系统[P]. 山西省：CN113160006A,2021-07-23.
+
+[3]李桂珍.基于C语言的学生成绩管理系统的设计与实现[J].电子制作,2021(04):61-63.
+
+[4]曾伟梁,李佳宁.基于Java Web MVC框架的学生成绩管理系统设计[J].南昌师范学院学报,2020,41(06):37-40.
+
+[5]欧阳桂秀.JDBC技术在学生成绩管理系统中的应用[J].科技传播,2020,12(22):99-102.
+
+[6]石国涛,李泽华,李勇,凌宏伟,王峥嵘.学生成绩管理系统的设计与开发研究[J].现代信息科技,2020,4(19):48-52.
+
+[7]马婷婷,李浩峰.学生成绩管理系统设计与实现[J].电脑知识与技术,2020,16(24):81-82+88.
+
+[8]江志华.学生成绩管理系统的设计与实现[J].信息与电脑(理论版),2020,32(10):79-81.
+
+[9]谢晓珂.基于微信平台校园学生成绩管理系统的构建[J].数字通信世界,2020(04):207.
+
+[10]刘文娟. 文华学院学生成绩管理系统的研究与分析[D].云南大学,2019.
+
+[11] Information Technology - Data Mining; New Data Mining Findings from Y. Zhang et al Outlined (Application Analysis and Exploration of Data Mining Techniques in Vocational College Students' Achievement Management)[J]. Journal of Engineering,2018:
+
+[12]杨金立. 保山技师学院学生成绩管理系统的研究与分析[D].云南大学,2018.
+
+[13], 学生成绩综合分析系统. 安徽省,安庆师范大学,2017-12-27.
+
+[14]黄森林. 学生成绩管理系统的研究与分析[D].云南大学,2017.
+
+[15]袁军. 学生成绩管理系统分析与研究[C]//2016智能城市与信息化建设国际学术交流研讨会论文集V.,2017:199.
+
+[16]Cui Yun Guo. Student Achievement Management System Development and Design[J]. Advanced Materials Research,2017,3255(971-973):
+
+[17]Lee,In-hoi. A Study of Supporting Plans to Improve Harmonious Educational Achievement of Middle School Students[J]. Journal of educational Research Institute,2017,14(2):
+
+致谢
+伴随着设计的完成，大学生涯也随之即将结束。大学期间是我最珍惜的时光，大学时光中学会了很多，也成长了很多，这段时光中每一段回忆都刻在脑海中。感谢一起学习，一起成长同学们，和成长过程悉心教导的老师们，非常感激有你们的陪伴。
+
+首先感谢我的指导老师，设计的完成离不开老师的一系列指导。在毕业设计的完成过程中，老师给出了很多中肯的建议，正是由于老师一丝不苟的工作态度，我的设计才能顺利的完成。
+
+最后，感谢在大学生涯中每一位教导我的老师，是你们教给了我丰富的知识，更教会了我遇到问题时，如何去应对并解决。谢谢你们的帮助与支持。
+————————————————
+版权声明：本文为CSDN博主「全栈工程司」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/m0_73244000/article/details/135215570

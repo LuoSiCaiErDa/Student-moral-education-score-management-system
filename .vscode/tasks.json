@@ -1,0 +1,32 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build Moral Education Project",
+      "type": "shell",
+      "command": "mvn clean package",
+      "args": [],
+      "options": {
+        "cwd": "${workspaceFolder}/moral-education-score-management-system"
+      },
+      "problemMatcher": ["$maven"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Run Moral Education Project",
+      "type": "shell",
+      "command": "mvn spring-boot:run",
+      "options": {
+        "cwd": "${workspaceFolder}/moral-education-score-management-system"
+      },
+      "problemMatcher": ["$maven"],
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      }
+    }
+  ]
+}
